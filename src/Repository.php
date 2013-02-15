@@ -51,7 +51,7 @@ abstract class Repository extends Nette\Object
 	 * @param  string|NULL
 	 * @param  string|NULL
 	 * @param  string|NULL
-	 * @return EntityCollection
+	 * @return IEntityCollection
 	 */
 	protected function createCollection($selection, $entity = NULL, $refTable = NULL, $refColumn = NULL)
 	{

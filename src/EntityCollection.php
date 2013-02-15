@@ -17,7 +17,7 @@ use Nette\Database\Table\ActiveRow as NActiveRow;
 use Nette\Database\Table\Selection as NSelection;
 
 
-class EntityCollection extends Nette\Object implements \Iterator, \Countable
+class EntityCollection extends Nette\Object implements IEntityCollection
 {
 
 	/** @var NSelection */

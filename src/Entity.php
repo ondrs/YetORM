@@ -45,7 +45,7 @@ abstract class Entity extends Nette\Object
 	 * @param  string
 	 * @param  string
 	 * @param  string
-	 * @return EntityCollection
+	 * @return IEntityCollection
 	 */
 	protected function getMany($entity, $relTable, $entityTable, $throughColumn = NULL)
 	{
@@ -72,7 +72,7 @@ abstract class Entity extends Nette\Object
 					&& substr($method->name, 0, 3) === 'get' && strlen($method->name) > 3) {
 
 				$value = $method->invoke($this);
-				if (!($value instanceof EntityCollection || $value instanceof Entity)) {
+				if (!($value instanceof IEntityCollection || $value instanceof Entity)) {
 					$values[lcfirst(substr($method->name, 3))] = $value;
 				}
 
