@@ -82,12 +82,7 @@ abstract class Entity extends Nette\Object
 		// @property and @property-read annotations
 		foreach ($this->getProperties() as $name => $type) {
 			if (!isset($values[$name])) {
-				$value = $this->row->$name;
-				if (settype($value, $type) === FALSE) {
-					throw new Nette\InvalidArgumentException("Invalid property type.");
-				}
-
-				$values[$name] = $value;
+				$values[$name] = static::setType($this->row->$name, $type);
 			}
 		}
 
@@ -135,11 +130,7 @@ abstract class Entity extends Nette\Object
 
 		} catch (Nette\MemberAccessException $e) {
 			if ($this->hasProperty($name, FALSE, $property, $type)) {
-				$value = $this->row->$property;
-				if (settype($value, $type) === FALSE) {
-					throw new Nette\InvalidArgumentException("Invalid property type.");
-				}
-
+				$value = static::setType($this->row->$property, $type);
 				return $value;
 			}
 
@@ -162,13 +153,7 @@ abstract class Entity extends Nette\Object
 		} catch (Nette\MemberAccessException $e) {
 			if ($this->hasProperty($name, TRUE, $property, $expected)) {
 				$expected = $expected === 'bool' ? 'boolean' : $expected; // accept 'bool' as well as 'boolean'
-				$actual = gettype($value);
-
-				if ($actual !== $expected) {
-					throw new Nette\InvalidArgumentException("Invalid type - '$expected' expected, '$actual' given.");
-				}
-
-				$this->row->$property = $value;
+				$this->row->$property = static::fixType($value, $expected);
 				return ;
 			}
 
@@ -226,6 +211,50 @@ abstract class Entity extends Nette\Object
 		}
 
 		return $props;
+	}
+
+
+
+	/**
+	 * @param  mixed
+	 * @param  string
+	 * @return mixed
+	 */
+	private static function fixType($value, $expected)
+	{
+		$actual = gettype($value);
+		if ($actual === 'object') {
+			if (!($value instanceof $expected)) {
+				throw new Nette\InvalidArgumentException("Instance of '$expected' expected, '$actual' given.");
+			}
+
+		} elseif ($actual !== $expected) {
+			throw new Nette\InvalidArgumentException("Invalid type - '$expected' expected, '$actual' given.");
+		}
+
+		return $value;
+	}
+
+
+
+	/**
+	 * @param  mixed
+	 * @param  string
+	 * @return mixed
+	 */
+	private static function setType($value, $expected)
+	{
+		$actual = gettype($value);
+		if ($actual === 'object') {
+			if (!($value instanceof $expected)) {
+				throw new Nette\InvalidArgumentException("Invalid instance - '$expected' expected, '$actual' gotten.");
+			}
+
+		} elseif (settype($value, $expected) === FALSE) {
+			throw new Nette\InvalidArgumentException("Unable to set type '$expected' from '$actual'.");
+		}
+
+		return $value;
 	}
 
 }
