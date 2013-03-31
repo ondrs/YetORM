@@ -14,9 +14,13 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
 		$book->book_title = 'New title';
 		$this->assertEquals('New title', $book->getBookTitle());
 
+
+
 		// use setter
 		$book->setBookTitle('Another title');
 		$this->assertEquals('Another title', $book->getBookTitle());
+
+
 
 		// setting read-only property
 		try {
@@ -29,6 +33,8 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
 			}
 		}
 
+
+
 		// setting invalid type
 		try {
 			$book->setBookTitle(123);
@@ -40,6 +46,7 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
 			}
 		}
 
+
 		try {
 			$book->setAvailable('TRUE');
 			$this->fail();
@@ -49,6 +56,19 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
 				throw $e;
 			}
 		}
+
+
+		try {
+			$book->setWritten('2010');
+			$this->fail();
+
+		} catch (Nette\InvalidArgumentException $e) {
+			if ($e->getMessage() !== "Invalid type - 'DateTime' expected, 'string' given.") {
+				throw $e;
+			}
+		}
+
+
 
 		// setting undeclared property
 		try {
@@ -78,6 +98,7 @@ class PropertiesTest extends PHPUnit_Framework_TestCase
 		$this->assertTrue(is_int($book->getId()));
 		$this->assertTrue(is_string($book->getBookTitle()));
 		$this->assertTrue(is_bool($book->getAvailable()));
+		$this->assertTrue($book->getWritten() instanceof DateTime);
 
 		// getting undeclared property
 		try {
