@@ -13,6 +13,7 @@ namespace YetORM;
 
 use Nette;
 use Nette\Utils\Strings as NStrings;
+use Nette\Reflection\ClassType as NClassType;
 use Nette\Database\Table\ActiveRow as NActiveRow;
 
 
@@ -21,6 +22,9 @@ abstract class Entity extends Nette\Object
 
 	/** @var NActiveRow */
 	protected $row;
+
+	/** @var array */
+	protected static $reflections = array();
 
 
 
@@ -159,6 +163,19 @@ abstract class Entity extends Nette\Object
 
 			throw $e;
 		}
+	}
+
+
+
+	/** @return NClassType */
+	static function getReflection()
+	{
+		$class = get_called_class();
+		if (!isset(static::$reflections[$class])) {
+			static::$reflections[$class] = parent::getReflection();
+		}
+
+		return static::$reflections[$class];
 	}
 
 
