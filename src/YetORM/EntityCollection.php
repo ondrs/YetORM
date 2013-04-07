@@ -93,6 +93,20 @@ class EntityCollection extends Nette\Object implements \Iterator, \Countable
 
 
 	/**
+	 * @param  mixed
+	 * @param  mixed
+	 * @return EntityCollection
+	 */
+	function filter($cond, $params = array())
+	{
+		call_user_method_array('where', $this->selection, func_get_args());
+		$this->invalidate();
+		return $this;
+	}
+
+
+
+	/**
 	 * API:
 	 *
 	 * <code>
